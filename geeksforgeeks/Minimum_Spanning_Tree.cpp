@@ -1,8 +1,5 @@
 // https://practice.geeksforgeeks.org/problems/minimum-spanning-tree/1
 
-// Kruskal MST
-// - Sort ASC edges by weight
-// - Repeat until n_edges = (n_nodes - 1)
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -35,21 +32,21 @@ int main()
 // Union-find
 struct subset{
     int parent, rank;
-};
+};  
 
 ostream& operator<<(ostream &out, const subset &s){
     out << s.parent << ", " << s.rank;
     return out;
 }
 
-int find(vector <subset> subsets, int i){
+int find(map<int, subset> &subsets, int i){
     if(subsets[i].parent != i)
         subsets[i].parent = find(subsets, subsets[i].parent);
 
     return subsets[i].parent;
 }
 
-void union_(vector <subset> subsets, int x, int y){
+void union_(map<int, subset> &subsets, int x, int y){
     if(subsets[x].rank < subsets[y].rank)
         subsets[x].parent = y;
     else if(subsets[y].rank < subsets[x].rank)
@@ -80,15 +77,15 @@ bool cmp_edge(edge e0, edge e1){
    g[u] represents adjacency list of vertex u,  Every element of this list
    is a pair<w,v>  where v is another vertex and w is weight of edge (u, v)
   Note : Vertex numbers start with 1 and don't need to be contiguous.   */
-int spanningTree(vector <pair<int,int> > g[], int MAX)
+int spanningTree(vector<pair<int,int> > g[], int MAX)
 {
 	// read g[] -> array of edges
     // create subset for each verticle
     int n_verticles = 0;
     subset subTemp;
-    vector <subset> subsets;
+    map<int, subset> subsets;
     edge eTemp;
-    vector <edge> edges;
+    vector<edge> edges;
 
     for(int i=1; i<MAX; i++){
         if(g[i].size() < 1)
@@ -96,7 +93,7 @@ int spanningTree(vector <pair<int,int> > g[], int MAX)
 
         subTemp.parent = i;
         subTemp.rank = 0;
-        subsets.push_back(subTemp);
+        subsets[i] = subTemp;
         n_verticles++;
 
         for(auto p : g[i]){
@@ -112,12 +109,8 @@ int spanningTree(vector <pair<int,int> > g[], int MAX)
     // for(auto e : edges){
     //     cout << e << "\n";
     // }
-    // for(auto sub : subsets){
-    //     cout << sub << "\n";
-    // }
 
-    // Create MST[n_verticles - 1]
-    edge MST[n_verticles - 1];
+    // edge MST[n_verticles - 1];
 
     // Loop edges
     // - Add smallest weight edges to MST,
@@ -125,18 +118,18 @@ int spanningTree(vector <pair<int,int> > g[], int MAX)
     int n_MST_edges = 0;
     int weights = 0;
     int x, y;
-    while(n_MST_edges < (n_verticles - 1)){
-       for(auto edge : edges){
-            x = find(subsets, edge.src);
-            y = find(subsets, edge.dst);
-            if(x != y){
-                MST[n_MST_edges] = edge;
-                weights += edge.w;
-                n_MST_edges++;
-            }
-            else
-                union_(subsets, x, y);
-       }
+    for(auto edge : edges){
+        x = find(subsets, edge.src);
+        y = find(subsets, edge.dst);
+        if(x != y){
+            union_(subsets, x, y);
+            
+            // MST[n_MST_edges] = edge;
+            weights += edge.w;
+            n_MST_edges++;
+            if(n_MST_edges == (n_verticles - 1))
+                break;
+        }
     }
 
     // Calculate sum of MST weights
