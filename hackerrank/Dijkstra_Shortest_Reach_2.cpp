@@ -11,77 +11,115 @@ int min_dist_id(const vector<int> dist, const bool sptSet[]){
     int min_id;
     int min_dist = INT_MAX;
     for(int i=0; i<dist.size(); i++){
-        if(sptSet[i])
-            continue;
-
-        if(dist[i] < min_dist){
+        if( 
+            !sptSet[i] &&
+            dist[i] <= min_dist
+        ){
             min_dist = dist[i];
             min_id = i;
-        }    
+        }
     }
     return min_id;
 }
 
+void print(map<int, vector<pair<int, int> > > eMap){
+    for(auto e=eMap.begin(); e!=eMap.end(); ++e){
+        cout << e->first << "| ";
+        for(auto adj : e->second){
+            cout << "(" << adj.first << ", " << adj.second << "), ";
+        }
+        cout << "\n";
+    }
+    cout << "--------------------\n";
+}
+
+// In case there are duplicated edges, remove all the larger 
+void rm_duplicates(map<int, vector<pair<int, int> > > &eMap){
+    for(auto e=eMap.begin(); e!=eMap.end(); ++e){
+        // Sort adj by weight ASC
+        sort(
+            e->second.begin(), e->second.end(), 
+            [](pair<int, int> &i, pair<int, int> &j){
+                if(i.first < j.first) return true;
+                else if(i.first > j.first) return false;
+
+                if(i.second < j.second) return true;
+                else if(i.second > j.second) return false;
+
+                return false;
+            }
+        );
+
+        vector<pair<int, int> > adjsTemp;
+        int pre_dst = -1;
+        for(auto adj : e->second){
+            if(adj.first != pre_dst)
+                adjsTemp.push_back(adj);
+            pre_dst = adj.first;
+        }
+        eMap[e->first] = adjsTemp;
+    }
+}
+
 // Complete the shortestReach function below.
 vector<int> shortestReach(int n, vector<vector<int>> edges, int s) {
-    // Create distance graph, distance array, shortest path set 
-    int graph[n][n];
-    vector<int> dist(n);
-    bool sptSet[n];
-    for(int i=0; i<n; i++){
+    // Create distance array, shortest path set
+    vector<int> dist(n+1);
+    bool sptSet[n+1];
+    for(int i=0; i<n+1; i++){
         dist[i] = INT_MAX;
         sptSet[i] = false;
-        for(int j=0; j<n; j++){
-            graph[i][j] = 0;
-        }
     }
+    
+    // Edges map
+    // eMap[src] = [(dst, w), ...]
+    map<int, vector<pair<int, int> > > eMap;
 
-    dist[s] = 0;
     for(int i=0; i<edges.size(); i++){
-        graph[edges[i][0] - 1][edges[i][1] - 1] = edges[i][2];
+        eMap[edges[i][0]].push_back(pair<int, int>(edges[i][1], edges[i][2]));
+        eMap[edges[i][1]].push_back(pair<int, int>(edges[i][0], edges[i][2]));
     }
-
-    // Graph
-    // for(int i=0; i<n; i++){
-    //     for(int j=0; j<n; j++){
-    //         cout << graph[i][j] << " ";
-    //     }
-    //     cout << "\n";
-    // }
-    // cout << "\n";
-
+    // print(eMap);
+    rm_duplicates(eMap);
+    // print(eMap);
 
     // Dijkstra Calculate distance
+    dist[s] = 0;
     int tar_id; // target node's id
     // Verticles loop
-    for(int i=0; i<n; i++){
+    for(int i=1; i<n+1; i++){
         //target node -> sptSet
         tar_id = min_dist_id(dist, sptSet);
-        cout << tar_id;
         sptSet[tar_id] = true;
 
-        // Update Adjacents' distance
-        for(int j=0; j<n; j++){
+        // Update dist of adjacents
+        for(auto adj : eMap[tar_id]){
             if(
-                // dist[tar_id] != INT_MAX &&
-                !sptSet[j] &&
-                dist[tar_id] + graph[tar_id][j] < dist[j]
+                !sptSet[adj.first] && 
+                dist[tar_id] != INT_MAX &&
+                dist[tar_id] + adj.second < dist[adj.first]
             )
-                dist[j] = dist[tar_id] + graph[tar_id][j];
+                dist[adj.first] = dist[tar_id] + adj.second;            
         }
-
-        // for(int d=0; d<n; d++){
-        //     cout << dist[d] << " ";
-        // }
-        // cout << "\n";
     }
-    return dist;    
+
+    vector<int> rv; //return array
+    for(int i=1; i<n+1; i++){
+        if(i == s)
+            continue;
+
+        if(dist[i] != INT_MAX)
+            rv.push_back(dist[i]);
+        else
+            rv.push_back(-1);        
+    }
+    return rv;
 }
 
 int main()
 {
-    // ios_base::sync_with_stdio(false);
-    // cin.tie(NULL);
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
 
     ofstream fout(getenv("OUTPUT_PATH"));
 
