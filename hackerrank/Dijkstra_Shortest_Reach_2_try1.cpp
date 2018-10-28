@@ -4,6 +4,16 @@ using namespace std;
 
 int T;
 
+void printPath(int pre[], int src, int dst){
+    if(pre[dst] != -1 || dst == src){
+        while(dst != -1){
+            printf("%d ", dst);
+            dst = pre[dst];
+        }
+    }
+    printf("\n");
+}
+
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
@@ -28,9 +38,11 @@ int main(){
 
         int dist[n];
         bool visited[n];
+        int pre[n];
         for(int i=0; i<n; i++){
             dist[i] = INT_MAX;
             visited[i] = false;
+            pre[i] = -1;
         }
         dist[s] = 0;
 
@@ -52,6 +64,7 @@ int main(){
 
                 if(dist[dst] > alt_dist){
                     dist[dst] = alt_dist;
+                    pre[dst] = src;
                     q.push({dist[dst], dst});
                 }
             }
@@ -63,6 +76,10 @@ int main(){
             printf("%d ", (dist[i] != INT_MAX) ? dist[i] : -1);
         }
         printf("\n");
+
+        //for(int i=0; i<n; i++){
+        //    printPath(pre, s, i);
+        //}
     }
 
     return 0;
