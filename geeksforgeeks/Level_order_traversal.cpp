@@ -2,27 +2,27 @@
 using namespace std;
 
 struct Node{
-    int data;
-    Node* left, * right;
+  int data;
+  Node* left, * right;
 };
 
 void levelOrder(Node* node){
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    
-    queue<Node*> Q;
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+  
+  queue<Node*> Q;
 
-    Q.push(node);
+  Q.push(node);
 
-    while(!Q.empty()){
-        Node* first = Q.front();
-        cout << first->data << ' ';
-        Q.pop();
+  while(!Q.empty()){
+    Node* first = Q.front();
+    cout << first->data << ' ';
+    Q.pop();
 
-        if(first->left != NULL)
-            Q.push(first->left);
+    if(first->left != NULL)
+      Q.push(first->left);
 
-        if(first->right != NULL)
-            Q.push(first->right);
-    }
+    if(first->right != NULL)
+      Q.push(first->right);
+  }
 }
