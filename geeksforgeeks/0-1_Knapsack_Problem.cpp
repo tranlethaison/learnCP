@@ -11,7 +11,6 @@ class Knapsack{
     int *V; // Values
     int *W; // Weights
     int **M; // Memory
-    // map<pair<int, int>, int> M; // Memory
 
     void init_items(int n_items);
     void init_memory(int capacity);
@@ -56,8 +55,6 @@ Knapsack::Knapsack(int n_items){
 int Knapsack::res(int i, int X){
   if(M[i][X] != -1)
    return M[i][X];
-  // if(M.find({i, X}) != M.end())
-  //   return M[{i, X}];
 
   int f;
   if(i == n || X == 0)
@@ -71,7 +68,6 @@ int Knapsack::res(int i, int X){
     );
 
   M[i][X] = f;
-  // M[{i, X}] = f;
   return f;
 };
 
