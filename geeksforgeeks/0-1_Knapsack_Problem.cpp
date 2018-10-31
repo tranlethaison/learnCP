@@ -4,22 +4,23 @@ using namespace std;
 
 int t, n, c;
 
-class items{
+class Items{
   public:
     int n;
     int *V;
     int *W;
-    items(int n_items);
-    int max_value(int i, int X);
+    Items(int n_Items);
+    int max_value(int i, int X); //recure
+    int max_value(int X); //bottom-up 
 };
 
-items::items(int n_items){
-  n = n_items;
+Items::Items(int n_Items){
+  n = n_Items;
   V = new int[n];
   W = new int[n];
 };
 
-int items::max_value(int i, int X){
+int Items::max_value(int i, int X){
   if(i == n || X == 0)
     return 0;
 
@@ -32,6 +33,27 @@ int items::max_value(int i, int X){
     );
 };
 
+int Items::max_value(int X){
+  int M[n + 1][X + 1]; //memory
+
+  for(int i=n; i>=0; i--){
+    for(int r=0; r<=X; r++){
+      if(i == n || r == 0)
+        M[i][r] = 0;
+
+      if(W[i] <= X)
+        M[i][r] = max(
+          M[i + 1][r],
+          M[i + 1][r - W[i]] + V[i]
+        );
+      else
+        M[i][r] = M[i + 1][r];
+    }
+  }
+
+  return M[0][X];
+};
+
 int main(){
   scanf("%d", &t);
 
@@ -39,7 +61,7 @@ int main(){
     scanf("%d", &n);
     scanf("%d", &c);
 
-    items I(n);
+    Items I(n);
 
     for(int i=0; i<n; i++){
       scanf("%d", &I.V[i]);
@@ -48,7 +70,7 @@ int main(){
       scanf("%d", &I.W[i]);
     }
 
-    printf("%d\n", I.max_value(0, c));
+    printf("%d\n", I.max_value(c));
   }
 
   return 0;
