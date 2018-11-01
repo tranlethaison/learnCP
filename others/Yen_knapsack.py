@@ -30,7 +30,7 @@ Let's call:
 
   4. Do Recuse & Memorize; Or Bottom-up. Remember to check for acyclic.
     - Base case: Ran out of items to include, or remaining capacity is 0.
-    - Please see code below.
+    - Please see code below for details.
 
   5. Calculate complexity.
     Overall Time = #subproblems * time/subproblem
@@ -120,9 +120,17 @@ if __name__ == "__main__":
   K = Knapsack(W, V)
   K.init_memory(C)
   out = K.res(0, C)
-  print(out)
+  print("Recurse & Memorize")
+  print("\tValues:   ", V)
+  print("\tWeights:  ", W)
+  print("\tCapacity: ", C)
+  print("\tMax value:", out)
 
   # Bottom Up
   K2 = Knapsack(W, V)
   out = K2.bup(C)
-  print(out)
+  print("\nBottom Up")
+  print("\tValues:   ", V)
+  print("\tWeights:  ", W)
+  print("\tCapacity: ", C)
+  print("\tMax value:", out)
