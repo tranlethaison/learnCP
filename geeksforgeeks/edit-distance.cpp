@@ -55,16 +55,12 @@ int EditDistance::solve(){
     mem[i] = new int[size_1+1];
 
     for(int j=size_1; j>=0; j--){
-
-      if(i == size_0 && j == size_1)
-        mem[i][j] = 0;
-
-      else if(i == size_0)
+      if(i == size_0){
         mem[i][j] = size_1 - j;
-
-      else if(j == size_1)
+      }
+      else if(j == size_1){
         mem[i][j] = size_0 - i;
-
+      }
       else{
         mem[i][j] = min({
           costDoNothing(i, j) + mem[i+1][j+1],
