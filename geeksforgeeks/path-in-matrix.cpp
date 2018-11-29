@@ -33,22 +33,22 @@ class PIM{
             D[i][j] = M[i][j];
           }
           else if(j == 0){
-            D[i][j] = max({
-              M[i][j] + D[i-1][j],
-              M[i][j] + D[i-1][j+1]
+            D[i][j] = M[i][j] + max({
+              D[i-1][j],
+              D[i-1][j+1]
             });
           }
           else if(j == n-1){
-            D[i][j] = max({
-              M[i][j] + D[i-1][j],
-              M[i][j] + D[i-1][j-1]
+            D[i][j] = M[i][j] + max({
+              D[i-1][j],
+              D[i-1][j-1]
             });
           }
           else{
-            D[i][j] = max({
-              M[i][j] + D[i-1][j],
-              M[i][j] + D[i-1][j-1],
-              M[i][j] + D[i-1][j+1]
+            D[i][j] = M[i][j] + max({
+              D[i-1][j],
+              D[i-1][j-1],
+              D[i-1][j+1]
             }); 
           }
           // printf("%d ", D[i][j]);
@@ -57,7 +57,7 @@ class PIM{
       }
       // printf("\n");
       
-      // Solve original problems
+      // Solve original problem
       int max_path_len = 0;
       for(int j=0; j<n; j++)
         max_path_len = max(D[n-1][j], max_path_len);
