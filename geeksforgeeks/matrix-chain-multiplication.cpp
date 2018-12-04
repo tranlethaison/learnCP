@@ -4,12 +4,12 @@ using namespace std;
 
 class MCM{
   public:
-    int n;
-    int *P;
+    int n; // sizeof P
+    int *P; // Matrices's dimension
 
     MCM(int n);
-    int cost(int l);
-    int solve();
+    int cost(int i, int k, int j);
+    int topo();
 };
 
 MCM::MCM(int n){
@@ -21,32 +21,30 @@ MCM::MCM(int n){
   }
 };
 
-int MCM::cost(int l){
-
+int MCM::cost(int i, int k, int j){
+  return P[i] * P[k+1] * P[j+1];
 };
 
-int MCM::solve(){
-  int M[n][n];
+int MCM::topo(){
+  int m = n - 1; // #matrices
+  int M[m][m];
 
-  for(int i=n-1; i>=0; i--){
-    for(int j=i; j<n; j++){
+  for(int i=m-1; i>=0; i--){
+    for(int j=i; j<=m-1; j++){
       if(i == j)
         M[i][j] = 0;
       else{
-        int min_cost_l = 0;
-        for(int l=i+1; l<=j; l++)
-          min_cost_l = min(
-            M[i][l] + M[l][j] + cost(l),
-            min_cost_l
+        M[i][j] = INT_MAX;
+        for(int k=i; k<j; k++)
+          M[i][j] = min(
+            M[i][k] + M[k+1][j] + cost(i, k, j),
+            M[i][j]
           );
-        M[i][j] = min_cost_l;
       }
-      printf("%d ", M[i][j]);
     }
-    printf("\n");
   }
 
-  return M[0][n-1];
+  return M[0][m-1];
 };
 
 int main(){
@@ -57,7 +55,7 @@ int main(){
     scanf("%d\n", &n);
 
     MCM mcm(n);
-    printf("%d\n", mcm.solve());
+    printf("%d\n", mcm.topo());
   }
   return 0;
 }
