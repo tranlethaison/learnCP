@@ -13,7 +13,7 @@ using namespace std;
 typedef long long ll;
 
 bool is_valid(string s){
-  int num = atoi(s.c_str());
+  int num = stoi(s);
   return (s[0] != '0') && (1 <= num) && (num <= 26);
 }
 
