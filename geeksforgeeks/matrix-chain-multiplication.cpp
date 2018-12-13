@@ -8,6 +8,7 @@ class MCM{
     int *P; // Matrices's dimension
 
     MCM(int n);
+    ~MCM();
     int cost(int i, int k, int j);
     int topo();
 };
@@ -19,6 +20,10 @@ MCM::MCM(int n){
   for(int i=0; i<n; i++){
     scanf("%d", &P[i]);
   }
+};
+
+MCM::~MCM(){
+  delete[] P;
 };
 
 int MCM::cost(int i, int k, int j){
