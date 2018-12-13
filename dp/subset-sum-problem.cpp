@@ -2,10 +2,10 @@
 /*
 1. Reducing:
   - Find if there is a subset with sum equal half sum of whole set.
-  - If sum of whole set is odd -> return false 
+  - If sum of whole set is odd -> return false
   - Suffix A[i:]
   - Guess which is A[i] belongs to subset.
-  - Recurrence: 
+  - Recurrence:
     dp(i, h) <-
       dp(i+1, h-A[i]) OR
       dp(i+1, h)
@@ -13,70 +13,110 @@
   - Base case:
     dp(n, h) <- if(h = 0)
 
-  - O(n + h*n) = O(h*n) 
+  - O(n + h*n) = O(h*n)
 */
 #include <bits/stdc++.h>
 using namespace std;
 
 #define None -1
 
-int t, n, sumA;
-int *A, **M;
-
-string decode(int b){
-  assert(b == 0 || b == 1);
-  return b ? "YES" : "NO";
+string decode(int i){
+  assert(i == 0 || i == 1);
+  return i ? "YES" : "NO";
 }
 
-int dp(int i, int h){
-  if(h < 0)
-    return 0;
+class SubsetSum{
+public:
+  int n, sumA, h;
+  int *A, **M;
+  int done; // keep track whether to stop dp.
 
-  if(M[i][h] != None)
+  SubsetSum(int n_): n(n_){
+    A = NULL;
+    M = NULL;
+    initA();
+  };
+
+  ~SubsetSum(){
+    deleteA();
+    deleteM();
+  };
+
+  int dp(int i, int h){
+    if(done)
+      return 1;
+
+    if(h < 0)
+      return 0;
+
+    if(M[i][h] != None)
+      return M[i][h];
+
+    if(i == n-1)
+      M[i][h] = (h == 0) ? 1 : 0;
+    else
+      M[i][h] = (dp(i+1, h-A[i]) || dp(i+1, h)) ? 1 : 0;
+
+    done = M[i][h];
+
     return M[i][h];
+  }
 
-  if(i == n)
-    return M[i][h] = (h == 0) ? 1 : 0;
+  int solve(){
+    initM();
+    done = 0;
+    return dp(0, h);
+  };
 
-  return M[i][h] = (dp(i+1, h-A[i]) || dp(i+1, h)) ? 1 : 0;
-}
-
-int main()
-{
-  ios_base::sync_with_stdio(false);
-  cin.tie(NULL);
-  
-  cin >> t;
-  while(t--){
-    cin >> n;
+  void initA(){
     A = new int[n];
     sumA = 0;
     for(int i=0; i<n; i++){
       cin >> A[i];
       sumA += A[i];
     }
-    
-    if(sumA % 2 == 0){
-      int h = sumA / 2;
+  };
 
-      M = new int*[n+1];
-      for(int i=0; i<n+1; i++){
-        M[i] = new int[h+1];
-        for(int j=0; j<h+1; j++)
-          M[i][j] = None;
-      }
+  void deleteA(){
+    if(A)
+      delete[] A;
+  };
 
-      cout << decode(dp(0, h)) << "\n";
+  void initM(){
+    h = sumA / 2;
 
+    M = new int*[n];
+    for(int i=0; i<n; i++){
+      M[i] = new int[h+1];
+      for(int j=0; j<h+1; j++)
+        M[i][j] = None;
+    }
+  };
+
+  void deleteM(){
+    if(M){
       for(int i=0; i<n; i++)
         delete[] M[i];
       delete[] M;
     }
-    else{
-      cout << decode(0) << "\n";
-    }
+  };
+};
 
-    delete[] A;
+int main()
+{
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int t, n;
+  cin >> t;
+  while(t--){
+    cin >> n;
+    SubsetSum ss(n);
+
+    if(ss.sumA % 2 == 0)
+      cout << decode(ss.solve()) << "\n";
+    else
+      cout << decode(0) << "\n";
   }
   return 0;
 }
