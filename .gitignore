@@ -1,6 +1,8 @@
 *.exe
+*.stackdump
 *.out
 MIT_6.006
 .vscode
 in
 out
+draft.xlsx
