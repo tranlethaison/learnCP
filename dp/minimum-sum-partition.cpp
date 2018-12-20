@@ -17,12 +17,13 @@ public:
   };
 
   int dp(int a, int s1, int s2){
-    if(a == 0)
-      return abs(s1 - s2);
-
     string key = to_string(a) + "|" + to_string(s1);
+
     if(M.find(key) != M.end())
       return M[key];
+
+    if(a == 0)
+      return abs(s1 - s2);
 
     M[key] = min(
       dp(a-1, s1 + A[a-1], s2),
